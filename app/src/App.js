@@ -7,6 +7,7 @@ import Typography from "@material-ui/core/Typography";
 import Button from "@material-ui/core/Button";
 import KeyboardArrowLeft from "@material-ui/icons/KeyboardArrowLeft";
 import KeyboardArrowRight from "@material-ui/icons/KeyboardArrowRight";
+import CircularProgress from "@material-ui/core/CircularProgress";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -36,6 +37,7 @@ function App() {
   const theme = useTheme();
   const [activeStep, setActiveStep] = useState(0);
   const [maxSteps, setMaxsteps] = useState(0);
+  const [prog, setProg] = useState(false);
 
   const handleNext = () => {
     setActiveStep((prevActiveStep) => prevActiveStep + 1);
@@ -46,61 +48,67 @@ function App() {
   };
 
   useEffect(async () => {
+    setProg(true);
     await fetch("https://api.imgflip.com/get_memes")
       .then((r) => r.json())
       .then((data) => {
         setMemes(data.data.memes);
         setMaxsteps(data.data.memes.length);
       });
+    setProg(false);
   }, []);
   return (
     <div className="app">
-      {memes[0] && (
+      {prog ? (
+        <CircularProgress />
+      ) : (
         <div className="container">
-          <div className={classes.root}>
-            <Paper square elevation={0} className={classes.header}>
-              <Typography>{memes[activeStep].name}</Typography>
-            </Paper>
-            <img
-              className={classes.img}
-              src={memes[activeStep].url}
-              alt={memes[activeStep].name}
-            />
-            <MobileStepper
-              steps={maxSteps}
-              position="static"
-              variant="text"
-              activeStep={activeStep}
-              nextButton={
-                <Button
-                  size="small"
-                  onClick={handleNext}
-                  disabled={activeStep === maxSteps - 1}
-                >
-                  Next
-                  {theme.direction === "rtl" ? (
-                    <KeyboardArrowLeft />
-                  ) : (
-                    <KeyboardArrowRight />
-                  )}
-                </Button>
-              }
-              backButton={
-                <Button
-                  size="small"
-                  onClick={handleBack}
-                  disabled={activeStep === 0}
-                >
-                  {theme.direction === "rtl" ? (
-                    <KeyboardArrowRight />
-                  ) : (
-                    <KeyboardArrowLeft />
-                  )}
-                  Back
-                </Button>
-              }
-            />
-          </div>
+          {memes[0] && (
+            <div className={classes.root}>
+              <Paper square elevation={0} className={classes.header}>
+                <Typography>{memes[activeStep].name}</Typography>
+              </Paper>
+              <img
+                className={classes.img}
+                src={memes[activeStep].url}
+                alt={memes[activeStep].name}
+              />
+              <MobileStepper
+                steps={maxSteps}
+                position="static"
+                variant="text"
+                activeStep={activeStep}
+                nextButton={
+                  <Button
+                    size="small"
+                    onClick={handleNext}
+                    disabled={activeStep === maxSteps - 1}
+                  >
+                    Next
+                    {theme.direction === "rtl" ? (
+                      <KeyboardArrowLeft />
+                    ) : (
+                      <KeyboardArrowRight />
+                    )}
+                  </Button>
+                }
+                backButton={
+                  <Button
+                    size="small"
+                    onClick={handleBack}
+                    disabled={activeStep === 0}
+                  >
+                    {theme.direction === "rtl" ? (
+                      <KeyboardArrowRight />
+                    ) : (
+                      <KeyboardArrowLeft />
+                    )}
+                    Back
+                  </Button>
+                }
+              />
+            </div>
+          )}
         </div>
       )}
     </div>
