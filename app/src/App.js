@@ -53,6 +53,7 @@ const useStyles = makeStyles((theme) => ({
     overflow: "hidden",
     display: "block",
     width: "100%",
+    objectFit: "contain",
   },
 }));
 
